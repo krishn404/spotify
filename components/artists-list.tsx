@@ -57,36 +57,50 @@ export default function ArtistsList({ token, timeRange, limit }: ArtistsListProp
   }
 
   if (error) {
-    return <div className="bg-card border border-border rounded-lg p-6 text-center text-destructive">{error}</div>
+    return <div className="text-center text-destructive text-sm">{error}</div>
   }
 
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
       {artists.map((artist, index) => (
         <div
           key={artist.id}
-          className="bg-card border border-border rounded-lg p-4 hover:border-accent transition-colors flex items-center gap-4"
+          className="group relative h-56 sm:h-64 rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105"
         >
-          {/* Rank */}
-          <div className="text-2xl font-bold text-accent w-12 text-center">{index + 1}</div>
+          {/* Blurred Background Image */}
+          {artist.images[0] && (
+            <img
+              src={artist.images[0].url || "/placeholder.svg"}
+              alt={artist.name}
+              className="absolute inset-0 w-full h-full object-cover blur-sm scale-110"
+            />
+          )}
 
-          {/* Artist Image */}
-          <div className="w-16 h-16 flex-shrink-0">
+          {/* Overlay Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/20 to-black/80"></div>
+
+          {/* Rank Badge */}
+          <div className="absolute top-3 right-3 bg-accent text-background rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">
+            {index + 1}
+          </div>
+
+          {/* Content */}
+          <div className="absolute inset-0 p-4 flex flex-col justify-end text-white">
+            {/* Artist Image */}
             {artist.images[0] && (
               <img
                 src={artist.images[0].url || "/placeholder.svg"}
                 alt={artist.name}
-                className="w-full h-full object-cover rounded-full"
+                className="w-12 h-12 rounded-full mb-3 shadow-lg object-cover"
               />
             )}
-          </div>
 
-          {/* Artist Info */}
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-foreground truncate">{artist.name}</h3>
-            <p className="text-sm text-muted-foreground truncate">Popularity: {artist.popularity}%</p>
+            {/* Artist Name */}
+            <h3 className="font-semibold text-sm line-clamp-2 leading-tight mb-1">{artist.name}</h3>
+
+            {/* Genre */}
             {artist.genres.length > 0 && (
-              <p className="text-xs text-muted-foreground truncate">{artist.genres.slice(0, 2).join(", ")}</p>
+              <p className="text-xs text-white/80 line-clamp-1 capitalize">{artist.genres.slice(0, 2).join(", ")}</p>
             )}
           </div>
         </div>
