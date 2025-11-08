@@ -40,7 +40,7 @@ export default function DashboardPage({ token, onLogout }: DashboardPageProps) {
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">SoundSlate</h1>
+            <h1 className="text-2xl font-bold text-foreground">KYS</h1>
             {userName && <p className="text-sm text-muted-foreground">Welcome, {userName}</p>}
           </div>
           <button

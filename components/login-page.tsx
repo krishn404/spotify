@@ -20,7 +20,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-5xl font-bold text-foreground mb-2 tracking-tight">SoundSlate</h1>
+        <h1 className="text-5xl font-bold text-foreground mb-2 tracking-tight">KYS</h1>
         <p className="text-lg text-muted-foreground">Visualize your Spotify listening stats</p>
       </div>
 
