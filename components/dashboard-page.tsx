@@ -46,7 +46,7 @@ export default function DashboardPage({ token, onLogout }: DashboardPageProps) {
         <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold text-gradient-accent">
-              psyxtify stats
+              kantcancook 
             </h1>
             {userName && (
               <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-border/50">
@@ -86,7 +86,7 @@ export default function DashboardPage({ token, onLogout }: DashboardPageProps) {
       {/* Footer */}
       <footer className="border-t border-border/50 mt-16 py-8">
         <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm text-muted-foreground">Made with Spotify API • psyxtify stats</p>
+          <p className="text-sm text-muted-foreground">Made with Spotify API • kantcancook </p>
         </div>
       </footer>
     </div>

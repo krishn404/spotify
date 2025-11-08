@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* psyxtify stats: Modern Dark Theme with Neon Accents */
+  /* kantcancook stats: Modern Dark Theme with Neon Accents */
   --background: #0e0e0e;
   --foreground: #ffffff;
   --card: rgba(20, 20, 20, 0.6);

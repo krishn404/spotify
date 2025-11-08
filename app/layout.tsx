@@ -11,8 +11,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "psyxtify stats - Your Spotify Listening Stats",
-  description: "Visualize your Spotify listening stats with psyxtify stats",
+  title: "kantcancook stats - Your Spotify Listening Stats",
+  description: "Visualize your Spotify listening stats with kantcancook stats",
   generator: "v0.app",
   icons: {
     icon: [

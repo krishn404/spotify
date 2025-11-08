@@ -54,7 +54,7 @@ export default function StatsView({ token, userName }: StatsViewProps) {
           useCORS: true,
         }).then((canvas) => {
           const link = document.createElement("a")
-          link.download = `psyxtify-stats-${timeRangeLabel.toLowerCase().replace(/\s+/g, "-")}.png`
+          link.download = `kantcancook-stats-${timeRangeLabel.toLowerCase().replace(/\s+/g, "-")}.png`
           link.href = canvas.toDataURL()
           link.click()
         })
@@ -195,7 +195,7 @@ export default function StatsView({ token, userName }: StatsViewProps) {
               {displayName.toUpperCase()}'s {tabLabel}
             </h2>
             <div className="flex justify-end">
-              <p className="text-xs text-muted-foreground/60">stats by psyxtify</p>
+              <p className="text-xs text-muted-foreground/60">stats by kantcancook</p>
             </div>
       </div>
 
