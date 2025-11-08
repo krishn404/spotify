@@ -4,7 +4,7 @@ import { useState, type RefObject } from "react"
 import { Share2, Download, X } from "lucide-react"
 
 interface ShareButtonProps {
-  statsRef: RefObject<HTMLDivElement>
+  statsRef: RefObject<HTMLDivElement | null>
   activeTab: "tracks" | "artists"
 }
 
@@ -64,10 +64,10 @@ export default function ShareButton({ statsRef, activeTab }: ShareButtonProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-accent text-background rounded-lg font-medium hover:bg-accent/90 transition-colors"
+        className="flex items-center gap-2 px-4 py-2 bg-accent text-background rounded-lg font-semibold hover:bg-accent/90 transition-colors shadow-sm"
       >
         <Share2 size={18} />
-        Share
+        <span className="hidden sm:inline">Share</span>
       </button>
 
       {/* Dropdown Menu */}
