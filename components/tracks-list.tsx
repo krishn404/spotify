@@ -75,11 +75,11 @@ export default function TracksList({ token, timeRange, limit, viewMode, showAlbu
   // Card View - Reference UI Style: Grid with album art as background
   if (viewMode === "card") {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
         {tracks.map((track, index) => (
           <div
             key={track.id}
-            className="group relative h-[280px] md:h-[320px] rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
+            className="group relative aspect-[2/1] rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
           >
             {/* Background Image - Full album art */}
             {track.album.images[0] ? (
@@ -96,29 +96,29 @@ export default function TracksList({ token, timeRange, limit, viewMode, showAlbu
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60"></div>
 
             {/* Content Container */}
-            <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-between text-white z-10">
+            <div className="absolute inset-0 p-4 md:p-5 lg:p-6 flex flex-col justify-between text-white z-10">
               {/* Top Section - Rank */}
               <div>
-                <span className="text-6xl md:text-7xl font-bold leading-none text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
+                <span className="text-4xl md:text-5xl lg:text-6xl font-bold leading-none text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
                   {index + 1}
                 </span>
               </div>
 
               {/* Bottom Section - Track Info */}
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {/* Track Name */}
-                <h3 className="text-2xl md:text-3xl font-bold leading-tight line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                <h3 className="text-lg md:text-xl lg:text-2xl font-bold leading-tight line-clamp-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                   {track.name}
                 </h3>
 
                 {/* Artist Name */}
-                <p className="text-base md:text-lg text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                <p className="text-sm md:text-base text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] line-clamp-1">
                   {track.artists.map((a) => a.name).join(", ")}
                 </p>
 
                 {/* Duration - Bottom Right */}
-                <div className="flex justify-end mt-4">
-                  <span className="text-sm md:text-base text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                <div className="flex justify-end mt-2">
+                  <span className="text-xs md:text-sm text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                     {formatDuration(track.duration_ms)}
                   </span>
                 </div>
