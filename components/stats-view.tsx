@@ -1,10 +1,14 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { LayoutGrid, List } from "lucide-react"
+import { Download } from "lucide-react"
 import TracksList from "./tracks-list"
 import ArtistsList from "./artists-list"
 import ShareButton from "./share-button"
+import { Switch } from "./ui/switch"
+import { Slider } from "./ui/slider"
+import { Button } from "./ui/button"
+import { Label } from "./ui/label"
 
 interface StatsViewProps {
   token: string
@@ -20,7 +24,7 @@ function getTimeRangeLabel(timeRange: TimeRange): string {
     case "short_term":
       return "LAST MONTH"
     case "medium_term":
-      return "LAST 6 MONTHS"
+      return "LAST SIX MONTHS"
     case "long_term":
       return "ALL TIME"
     default:
@@ -30,132 +34,194 @@ function getTimeRangeLabel(timeRange: TimeRange): string {
 
 export default function StatsView({ token, userName }: StatsViewProps) {
   const [activeTab, setActiveTab] = useState<Tab>("tracks")
-  const [timeRange, setTimeRange] = useState<TimeRange>("short_term")
+  const [timeRange, setTimeRange] = useState<TimeRange>("medium_term")
   const [limit, setLimit] = useState(10)
-  const [viewMode, setViewMode] = useState<ViewMode>("card")
+  const [viewMode, setViewMode] = useState<ViewMode>("simple")
+  const [showAlbumArt, setShowAlbumArt] = useState(false)
   const statsRef = useRef<HTMLDivElement>(null)
 
   const displayName = userName || "User"
   const timeRangeLabel = getTimeRangeLabel(timeRange)
-  const tabLabel = activeTab === "tracks" ? "Top songs" : "Top artists"
+  const tabLabel = activeTab === "tracks" ? "Top Songs" : "Top Artists"
+
+  const handleExportImage = () => {
+    if (statsRef.current) {
+      // Import html2canvas dynamically
+      import("html2canvas").then((html2canvas) => {
+        html2canvas.default(statsRef.current!, {
+          backgroundColor: "#0e0e0e",
+          scale: 2,
+          useCORS: true,
+        }).then((canvas) => {
+          const link = document.createElement("a")
+          link.download = `psyxtify-stats-${timeRangeLabel.toLowerCase().replace(/\s+/g, "-")}.png`
+          link.href = canvas.toDataURL()
+          link.click()
+        })
+      })
+    }
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Reference UI Style Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-        {/* Left side - Title */}
-        <div className="flex flex-col">
-          <h1 className="text-4xl md:text-5xl font-bold text-muted-foreground/70 mb-1 tracking-tight">
-            {timeRangeLabel}
-          </h1>
-          <h2 className="text-2xl md:text-3xl font-semibold text-foreground">
-            {displayName.toUpperCase()}'s {tabLabel}
-          </h2>
-        </div>
-
-        {/* Right side - Controls and attribution */}
-        <div className="flex flex-col items-end gap-3">
-          <p className="text-xs text-muted-foreground/60 hidden sm:block">stats by KYS</p>
-          <div className="flex items-center gap-3">
-            {/* View Mode Toggle - Only show in card view */}
-            {viewMode === "card" && (
-              <div className="flex items-center gap-2 bg-card/50 rounded-lg p-1 border border-border/50">
-                <button
-                  onClick={() => setViewMode("card")}
-                  className="p-2 rounded-md bg-accent text-background transition-all"
-                  title="Card View"
-                >
-                  <LayoutGrid size={16} />
-                </button>
-                <button
-                  onClick={() => setViewMode("simple")}
-                  className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50 transition-all"
-                  title="Simple View"
-                >
-                  <List size={16} />
-                </button>
-              </div>
-            )}
-            {viewMode === "simple" && (
-              <div className="flex items-center gap-2 bg-card/50 rounded-lg p-1 border border-border/50">
-                <button
-                  onClick={() => setViewMode("card")}
-                  className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50 transition-all"
-                  title="Card View"
-                >
-                  <LayoutGrid size={16} />
-                </button>
-                <button
-                  onClick={() => setViewMode("simple")}
-                  className="p-2 rounded-md bg-accent text-background transition-all"
-                  title="Simple View"
-                >
-                  <List size={16} />
-                </button>
-              </div>
-            )}
-            <ShareButton statsRef={statsRef} activeTab={activeTab} />
-          </div>
-        </div>
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 min-h-[calc(100vh-200px)]">
+      {/* Left Sidebar - Controls */}
+      <aside className="w-full lg:w-80 shrink-0">
+        <div className="glass-strong rounded-2xl p-6 space-y-8 sticky top-24">
+          {/* Section Title */}
+          <div>
+            <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-6">
+              Customize your chart
+            </h3>
       </div>
 
-      {/* Filters - Hidden in card view, shown in simple view or always visible */}
-      <div className="flex flex-wrap items-center gap-4">
         {/* Tabs */}
-        <div className="flex gap-1 bg-card/50 rounded-lg p-1 border border-border/50">
+          <div className="space-y-3">
+            <Label className="text-sm font-medium text-foreground">View Type</Label>
+            <div className="flex gap-2">
           <button
             onClick={() => setActiveTab("tracks")}
-            className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
+                className={`flex-1 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
               activeTab === "tracks"
-                ? "bg-accent text-background"
-                : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                    ? "bg-primary text-primary-foreground neon-glow"
+                    : "bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground"
             }`}
           >
             Tracks
           </button>
           <button
             onClick={() => setActiveTab("artists")}
-            className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
+                className={`flex-1 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
               activeTab === "artists"
-                ? "bg-accent text-background"
-                : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                    ? "bg-primary text-primary-foreground neon-glow"
+                    : "bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground"
             }`}
           >
             Artists
           </button>
+            </div>
         </div>
 
-        {/* Time Range Dropdown */}
-        <select
-          value={timeRange}
-          onChange={(e) => setTimeRange(e.target.value as TimeRange)}
-          className="bg-card/50 border border-border/50 rounded-lg px-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
-        >
-          <option value="short_term">Last 4 Weeks</option>
-          <option value="medium_term">Last 6 Months</option>
-          <option value="long_term">All Time</option>
-        </select>
+          {/* Time Period Buttons */}
+          <div className="space-y-3">
+            <Label className="text-sm font-medium text-foreground">Time Period</Label>
+            <div className="flex flex-col gap-2">
+              {[
+                { value: "short_term" as TimeRange, label: "Last Month" },
+                { value: "medium_term" as TimeRange, label: "Last 6 Months" },
+                { value: "long_term" as TimeRange, label: "All Time" },
+              ].map((period) => (
+                <button
+                  key={period.value}
+                  onClick={() => setTimeRange(period.value)}
+                  className={`px-4 py-2.5 rounded-full text-sm font-medium text-left transition-all duration-300 ${
+                    timeRange === period.value
+                      ? "bg-primary/20 text-primary border border-primary/30 neon-glow-purple"
+                      : "bg-secondary/30 text-muted-foreground hover:bg-secondary/50 hover:text-foreground border border-transparent"
+                  }`}
+                >
+                  {period.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        {/* Limit Dropdown */}
-        <select
-          value={limit}
-          onChange={(e) => setLimit(Number(e.target.value))}
-          className="bg-card/50 border border-border/50 rounded-lg px-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
-        >
-          <option value={5}>Top 5</option>
-          <option value={10}>Top 10</option>
-        </select>
+          {/* Toggles */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="simple-mode" className="text-sm font-medium text-foreground cursor-pointer">
+                Simple Mode
+              </Label>
+              <Switch
+                id="simple-mode"
+                checked={viewMode === "simple"}
+                onCheckedChange={(checked) => setViewMode(checked ? "simple" : "card")}
+                className="data-[state=checked]:bg-primary data-[state=checked]:neon-glow"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="album-art" className="text-sm font-medium text-foreground cursor-pointer">
+                Display album instead of artist
+              </Label>
+              <Switch
+                id="album-art"
+                checked={showAlbumArt}
+                onCheckedChange={setShowAlbumArt}
+                className="data-[state=checked]:bg-primary data-[state=checked]:neon-glow"
+              />
+            </div>
+          </div>
+
+          {/* Number of Tracks Slider */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-medium text-foreground">Number of Tracks</Label>
+              <span className="text-sm font-semibold text-primary">{limit}</span>
+            </div>
+            <Slider
+              value={[limit]}
+              onValueChange={([value]) => setLimit(value)}
+              min={5}
+              max={20}
+              step={5}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>5</span>
+              <span>20</span>
+            </div>
+          </div>
+
+          {/* Export Button */}
+          <Button
+            onClick={handleExportImage}
+            variant="outline"
+            className="w-full glass border-primary/30 hover:border-primary/50 hover:neon-glow-purple transition-all duration-300"
+          >
+            <Download size={16} />
+            Export Image
+          </Button>
+        </div>
+      </aside>
+
+      {/* Main Chart Area */}
+      <main className="flex-1 min-w-0">
+        <div className="spotlight-bg rounded-2xl p-8 lg:p-12 space-y-8">
+          {/* Title Section */}
+          <div className="space-y-2">
+            <h1 className="text-4xl lg:text-5xl font-bold uppercase tracking-tight text-gradient">
+              {timeRangeLabel}
+            </h1>
+            <h2 className="text-xl lg:text-2xl font-light text-muted-foreground">
+              {displayName.toUpperCase()}'s {tabLabel}
+            </h2>
+            <div className="flex justify-end">
+              <p className="text-xs text-muted-foreground/60">stats by psyxtify</p>
+            </div>
       </div>
 
-      {/* Stats Container - No background in card view to match reference */}
-      <div ref={statsRef} className={viewMode === "card" ? "" : "bg-card rounded-xl p-6 sm:p-8 border border-border shadow-sm"}>
+          {/* Stats Container */}
+          <div ref={statsRef} className="space-y-4">
         {activeTab === "tracks" && (
-          <TracksList token={token} timeRange={timeRange} limit={limit} viewMode={viewMode} />
+              <TracksList 
+                token={token} 
+                timeRange={timeRange} 
+                limit={limit} 
+                viewMode={viewMode}
+                showAlbumArt={showAlbumArt}
+              />
         )}
         {activeTab === "artists" && (
-          <ArtistsList token={token} timeRange={timeRange} limit={limit} viewMode={viewMode} />
+              <ArtistsList 
+                token={token} 
+                timeRange={timeRange} 
+                limit={limit} 
+                viewMode={viewMode}
+                showAlbumArt={showAlbumArt}
+              />
         )}
       </div>
+        </div>
+      </main>
     </div>
   )
 }

@@ -42,19 +42,19 @@ export default function DashboardPage({ token, onLogout }: DashboardPageProps) {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <header className="glass-strong border-b border-border/50 sticky top-0 z-50">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-accent to-accent/70 bg-clip-text text-transparent">
-              KYS
+            <h1 className="text-2xl font-bold text-gradient-accent">
+              psyxtify stats
             </h1>
             {userName && (
-              <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-border">
+              <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-border/50">
                 {userImage ? (
                   <img
                     src={userImage}
                     alt={userName}
-                    className="w-8 h-8 rounded-full object-cover ring-2 ring-accent/20"
+                    className="w-8 h-8 rounded-full object-cover ring-2 ring-primary/20"
                   />
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
@@ -70,7 +70,7 @@ export default function DashboardPage({ token, onLogout }: DashboardPageProps) {
           </div>
           <button
             onClick={onLogout}
-            className="flex items-center gap-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium py-2 px-4 rounded-lg transition-colors shadow-sm"
+            className="flex items-center gap-2 bg-secondary/50 hover:bg-secondary text-secondary-foreground font-medium py-2 px-4 rounded-lg transition-all duration-300 hover:neon-glow"
           >
             <LogOut size={16} />
             <span className="hidden sm:inline">Logout</span>
@@ -79,14 +79,14 @@ export default function DashboardPage({ token, onLogout }: DashboardPageProps) {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <main className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <StatsView token={token} userName={userName} />
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-16 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm text-muted-foreground">Made with Spotify API</p>
+      <footer className="border-t border-border/50 mt-16 py-8">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-sm text-muted-foreground">Made with Spotify API • psyxtify stats</p>
         </div>
       </footer>
     </div>
