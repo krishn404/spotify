@@ -38,27 +38,43 @@ export default function StatsView({ token, userName }: StatsViewProps) {
   const [limit, setLimit] = useState(10)
   const [viewMode, setViewMode] = useState<ViewMode>("card")
   const [showAlbumArt, setShowAlbumArt] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
   const statsRef = useRef<HTMLDivElement>(null)
 
   const displayName = userName || "User"
   const timeRangeLabel = getTimeRangeLabel(timeRange)
   const tabLabel = activeTab === "tracks" ? "Top Songs" : "Top Artists"
 
-  const handleExportImage = () => {
-    if (statsRef.current) {
-      // Import html2canvas dynamically
-      import("html2canvas").then((html2canvas) => {
-        html2canvas.default(statsRef.current!, {
-          backgroundColor: "#0e0e0e",
-          scale: 2,
-          useCORS: true,
-        }).then((canvas) => {
-          const link = document.createElement("a")
-          link.download = `kantcancook-stats-${timeRangeLabel.toLowerCase().replace(/\s+/g, "-")}.png`
-          link.href = canvas.toDataURL()
-          link.click()
-        })
+  const handleExportImage = async () => {
+    if (!statsRef.current) {
+      alert("Unable to export: content not ready")
+      return
+    }
+
+    setIsExporting(true)
+    try {
+      const html2canvas = (await import("html2canvas")).default
+      const canvas = await html2canvas(statsRef.current, {
+        backgroundColor: null, // Transparent background
+        scale: 2,
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        imageTimeout: 15000,
+        removeContainer: true,
       })
+
+      const link = document.createElement("a")
+      link.download = `kantcancook-stats-${timeRangeLabel.toLowerCase().replace(/\s+/g, "-")}-${new Date().toISOString().split("T")[0]}.png`
+      link.href = canvas.toDataURL("image/png")
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } catch (err) {
+      console.error("Failed to export image:", err)
+      alert("Failed to export image. Please try again.")
+    } finally {
+      setIsExporting(false)
     }
   }
 
@@ -174,18 +190,19 @@ export default function StatsView({ token, userName }: StatsViewProps) {
           {/* Export Button */}
           <Button
             onClick={handleExportImage}
+            disabled={isExporting}
             variant="outline"
-            className="w-full glass border-primary/30 hover:border-primary/50 hover:neon-glow-purple transition-all duration-300"
+            className="w-full glass border-primary/30 hover:border-primary/50 hover:neon-glow-purple transition-all duration-300 disabled:opacity-50"
           >
             <Download size={16} />
-            Export Image
+            {isExporting ? "Exporting..." : "Export Image"}
           </Button>
         </div>
       </aside>
 
       {/* Main Chart Area */}
       <main className="flex-1 min-w-0">
-        <div className="spotlight-bg rounded-2xl p-8 lg:p-12 space-y-8">
+        <div ref={statsRef} className="spotlight-bg rounded-2xl p-8 lg:p-12 space-y-8">
           {/* Title Section */}
           <div className="space-y-2">
             <h1 className="text-4xl lg:text-5xl font-bold uppercase tracking-tight text-gradient">
@@ -200,7 +217,7 @@ export default function StatsView({ token, userName }: StatsViewProps) {
       </div>
 
           {/* Stats Container */}
-          <div ref={statsRef} className="space-y-4">
+          <div className="space-y-4">
         {activeTab === "tracks" && (
               <TracksList 
                 token={token} 

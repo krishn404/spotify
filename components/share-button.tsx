@@ -13,25 +13,35 @@ export default function ShareButton({ statsRef, activeTab }: ShareButtonProps) {
   const [isExporting, setIsExporting] = useState(false)
 
   const exportAsImage = async () => {
-    if (!statsRef.current) return
+    if (!statsRef.current) {
+      alert("Unable to export: content not ready")
+      return
+    }
 
     setIsExporting(true)
     try {
       const html2canvas = (await import("html2canvas")).default
       const canvas = await html2canvas(statsRef.current, {
-        backgroundColor: "#ffffff",
+        backgroundColor: null, // Transparent background
         scale: 2,
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        imageTimeout: 15000,
+        removeContainer: true,
       })
 
       const link = document.createElement("a")
-      link.href = canvas.toDataURL("image/png")
       link.download = `soundslate-${activeTab}-${new Date().toISOString().split("T")[0]}.png`
+      link.href = canvas.toDataURL("image/png")
+      document.body.appendChild(link)
       link.click()
+      document.body.removeChild(link)
 
       setIsOpen(false)
     } catch (err) {
       console.error("Failed to export image:", err)
-      alert("Failed to export image")
+      alert("Failed to export image. Please try again.")
     } finally {
       setIsExporting(false)
     }
