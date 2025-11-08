@@ -36,7 +36,7 @@ export default function StatsView({ token, userName }: StatsViewProps) {
   const [activeTab, setActiveTab] = useState<Tab>("tracks")
   const [timeRange, setTimeRange] = useState<TimeRange>("medium_term")
   const [limit, setLimit] = useState(10)
-  const [viewMode, setViewMode] = useState<ViewMode>("simple")
+  const [viewMode, setViewMode] = useState<ViewMode>("card")
   const [showAlbumArt, setShowAlbumArt] = useState(false)
   const statsRef = useRef<HTMLDivElement>(null)
 
