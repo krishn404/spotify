@@ -118,53 +118,58 @@ export default function ArtistsList({ token, timeRange, limit, viewMode }: Artis
     )
   }
 
-  // Card View
-  const gridCols = limit === 5 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-5" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-5"
-
+  // Card View - Reference UI Style: Two columns with tall cards
   return (
-    <div className={`grid ${gridCols} gap-4`}>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
       {artists.map((artist, index) => (
         <div
           key={artist.id}
-          className="group relative h-64 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+          className="group relative h-[280px] md:h-[320px] rounded-lg overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
         >
-          {/* Blurred Background Image */}
-          {artist.images[0] && (
+          {/* Background Image - Full artist image, not blurred */}
+          {artist.images[0] ? (
             <img
               src={artist.images[0].url || "/placeholder.svg"}
               alt={artist.name}
-              className="absolute inset-0 w-full h-full object-cover blur-md scale-110 brightness-75"
+              className="absolute inset-0 w-full h-full object-cover"
             />
+          ) : (
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-muted to-muted/50" />
           )}
 
-          {/* Overlay Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/90"></div>
+          {/* Subtle Overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/60"></div>
 
-          {/* Rank Badge */}
-          <div className="absolute top-3 right-3 bg-accent text-background rounded-full w-9 h-9 flex items-center justify-center font-bold text-sm shadow-lg z-10">
-            {index + 1}
-          </div>
+          {/* Content Container */}
+          <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-between text-white z-10">
+            {/* Top Section - Rank */}
+            <div>
+              <span className="text-6xl md:text-7xl font-bold leading-none text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                {index + 1}
+              </span>
+            </div>
 
-          {/* Content */}
-          <div className="absolute inset-0 p-5 flex flex-col justify-end text-white z-10">
-            {/* Artist Image */}
-            {artist.images[0] && (
-              <img
-                src={artist.images[0].url || "/placeholder.svg"}
-                alt={artist.name}
-                className="w-16 h-16 rounded-full mb-3 shadow-xl ring-2 ring-white/20 object-cover"
-              />
-            )}
+            {/* Bottom Section - Artist Info */}
+            <div className="space-y-2">
+              {/* Artist Name */}
+              <h3 className="text-2xl md:text-3xl font-bold leading-tight line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                {artist.name}
+              </h3>
 
-            {/* Artist Name */}
-            <h3 className="font-bold text-base line-clamp-2 leading-tight mb-1.5 drop-shadow-lg">{artist.name}</h3>
+              {/* Genre */}
+              {artist.genres.length > 0 && (
+                <p className="text-base md:text-lg text-white/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] capitalize line-clamp-1">
+                  {artist.genres.slice(0, 2).join(", ")}
+                </p>
+              )}
 
-            {/* Genre */}
-            {artist.genres.length > 0 && (
-              <p className="text-xs text-white/90 line-clamp-1 capitalize drop-shadow-md">
-                {artist.genres.slice(0, 2).join(", ")}
-              </p>
-            )}
+              {/* Popularity - Bottom Right */}
+              <div className="flex justify-end mt-4">
+                <span className="text-sm md:text-base text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  {artist.popularity}% popular
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       ))}

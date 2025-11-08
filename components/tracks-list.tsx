@@ -11,6 +11,7 @@ interface Track {
     name: string
     images: Array<{ url: string }>
   }
+  duration_ms: number
 }
 
 interface TracksListProps {
@@ -18,6 +19,12 @@ interface TracksListProps {
   timeRange: "short_term" | "medium_term" | "long_term"
   limit: number
   viewMode: "card" | "simple"
+}
+
+function formatDuration(ms: number): string {
+  const minutes = Math.floor(ms / 60000)
+  const seconds = Math.floor((ms % 60000) / 1000)
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`
 }
 
 export default function TracksList({ token, timeRange, limit, viewMode }: TracksListProps) {
@@ -108,51 +115,56 @@ export default function TracksList({ token, timeRange, limit, viewMode }: Tracks
     )
   }
 
-  // Card View
-  const gridCols = limit === 5 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-5" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-5"
-
+  // Card View - Reference UI Style: Two columns with tall cards
   return (
-    <div className={`grid ${gridCols} gap-4`}>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
       {tracks.map((track, index) => (
         <div
           key={track.id}
-          className="group relative h-64 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+          className="group relative h-[280px] md:h-[320px] rounded-lg overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
         >
-          {/* Blurred Background Image */}
-          {track.album.images[0] && (
+          {/* Background Image - Full album art, not blurred */}
+          {track.album.images[0] ? (
             <img
               src={track.album.images[0].url || "/placeholder.svg"}
               alt={track.album.name}
-              className="absolute inset-0 w-full h-full object-cover blur-md scale-110 brightness-75"
+              className="absolute inset-0 w-full h-full object-cover"
             />
+          ) : (
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-muted to-muted/50" />
           )}
 
-          {/* Overlay Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/90"></div>
+          {/* Subtle Overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/60"></div>
 
-          {/* Rank Badge */}
-          <div className="absolute top-3 right-3 bg-accent text-background rounded-full w-9 h-9 flex items-center justify-center font-bold text-sm shadow-lg z-10">
-            {index + 1}
-          </div>
+          {/* Content Container */}
+          <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-between text-white z-10">
+            {/* Top Section - Rank */}
+            <div>
+              <span className="text-6xl md:text-7xl font-bold leading-none text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                {index + 1}
+              </span>
+            </div>
 
-          {/* Content */}
-          <div className="absolute inset-0 p-5 flex flex-col justify-end text-white z-10">
-            {/* Small Album Image */}
-            {track.album.images[0] && (
-              <img
-                src={track.album.images[0].url || "/placeholder.svg"}
-                alt={track.album.name}
-                className="w-14 h-14 rounded-lg mb-3 shadow-xl ring-2 ring-white/20"
-              />
-            )}
+            {/* Bottom Section - Track Info */}
+            <div className="space-y-2">
+              {/* Track Name */}
+              <h3 className="text-2xl md:text-3xl font-bold leading-tight line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                {track.name}
+              </h3>
 
-            {/* Track Name */}
-            <h3 className="font-bold text-base line-clamp-2 leading-tight mb-1.5 drop-shadow-lg">{track.name}</h3>
+              {/* Artist Name */}
+              <p className="text-base md:text-lg text-white/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                {track.artists.map((a) => a.name).join(", ")}
+              </p>
 
-            {/* Artist Name */}
-            <p className="text-xs text-white/90 line-clamp-1 drop-shadow-md">
-              {track.artists.map((a) => a.name).join(", ")}
-            </p>
+              {/* Duration - Bottom Right */}
+              <div className="flex justify-end mt-4">
+                <span className="text-sm md:text-base text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  {formatDuration(track.duration_ms)}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       ))}
